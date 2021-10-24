@@ -1,12 +1,19 @@
-import { createStore } from 'vuex'
+import {createStore} from 'vuex'
+import {userModule} from "@/store/user.module";
 
-export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  }
+export interface RootState {
+
+}
+
+export default createStore<RootState>({
+    state: {},
+    mutations: {},
+    actions: {
+        init: ({dispatch}) => {
+            dispatch('user/loadUser')
+        }
+    },
+    modules: {
+        user: userModule
+    }
 })
