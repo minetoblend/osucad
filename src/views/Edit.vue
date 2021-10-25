@@ -1,11 +1,11 @@
 <template>
   <div>
-    <editor v-if="connector.status.value === ConnectorStatus.Ready" :connector="connector" />
+    <editor v-if="isConnected" :connector="connector" />
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {Connector, ConnectorStatus} from "@/editor/connector";
 import Editor from "@/editor/Editor.vue";
@@ -17,9 +17,15 @@ export default defineComponent({
 
     const connector = new Connector(route.params.id as string)
 
+    const isConnected = ref(false)
+
+    watch(connector.status, value => isConnected.value = value === ConnectorStatus.Ready)
+
+
     return {
       connector,
-      ConnectorStatus
+      ConnectorStatus,
+      isConnected
     }
   }
 })
