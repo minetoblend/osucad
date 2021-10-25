@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import {requireUser} from "../auth";
-import {User} from "../user.repository";
+import {User} from "../repository/user.repository";
 
 const router = Router()
 
@@ -23,8 +23,7 @@ router.get('/me/beatmaps', requireUser, async (req, res) => {
         })
 
         res.json(beatmaps.data)
-    }
-    catch (e) {
+    } catch (e) {
         res.status(403).json(e)
     }
 

@@ -3,7 +3,7 @@ import passport from 'passport'
 import session from 'express-session'
 
 import OsuStrategy from 'passport-osu';
-import {getOrCreateUser, UserModel} from "./user.repository";
+import {getOrCreateUser, UserModel} from "./repository/user.repository";
 
 export function setupAuth(app: Express) {
     app.use(session({secret: '1234'}))

@@ -22,8 +22,6 @@ export const UserModel = model<User>('User', schema)
 export async function getOrCreateUser(profile: any, accessToken: string, refreshToken: string) {
     let user = await UserModel.findOne({profileId: profile.id})
 
-    console.log(accessToken)
-
     if (user) {
         await UserModel.updateOne({profileId: profile.id}, {
             $set: {
