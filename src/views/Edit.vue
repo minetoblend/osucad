@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, watch} from "vue";
+import {defineComponent, ref, watch, } from "vue";
 import {useRoute} from "vue-router";
 import {Connector, ConnectorStatus} from "@/editor/connector";
 import Editor from "@/editor/Editor.vue";
@@ -22,11 +22,17 @@ export default defineComponent({
     watch(connector.status, value => isConnected.value = value === ConnectorStatus.Ready)
 
 
+
     return {
       connector,
       ConnectorStatus,
       isConnected
     }
+  },
+
+  beforeUnmount() {
+    this.connector.close()
   }
+
 })
 </script>

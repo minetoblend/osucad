@@ -1,9 +1,13 @@
 import {ref} from "vue";
+import {UserStatusModule} from "@/editor/user.status";
+import {ChatModule} from "@/editor/components/chat";
+import {ContextModule} from "@/editor/context";
 
-interface SerializedUser {
+export interface SerializedUser {
     profileId: number
     displayName: string
     avatarUrl: string | null
+    uuid: string
 }
 
 export class Connector {
@@ -31,7 +35,7 @@ export class Connector {
         const message = JSON.parse(evt.data)
         const handler = this.messageHandlers[message.message]
         if (handler) {
-            handler.handleMessage(message.payload, this)
+            handler(message.payload, this)
         } else {
             console.error(`Could not find message handler for ${message.message}`)
         }
@@ -48,13 +52,24 @@ export class Connector {
     registerMessageHandler(id: string, handler: MessageHandler<any>) {
         if (this.messageHandlers[id])
             console.error(`Duplicate messageHandler '${id}' detected`)
-        else
+        else {
             this.messageHandlers[id] = handler
+        }
+    }
+
+    registerModule(module: ConnectorModule) {
+        module.setup(this)
     }
 
     init() {
-
         this.registerMessageHandler('user-list', userListMessageHandler)
+        this.registerModule(UserStatusModule)
+        this.registerModule(ChatModule)
+        this.registerModule(ContextModule)
+    }
+
+    close() {
+        this.ws.close()
     }
 }
 
@@ -64,12 +79,14 @@ export enum ConnectorStatus {
     Closed
 }
 
-export interface MessageHandler<T> {
-    handleMessage(payload: T, connector: Connector): void
+export type MessageHandler<T> =
+    (payload: T, connector: Connector) => void
+
+
+const userListMessageHandler: MessageHandler<SerializedUser[]> = (payload: SerializedUser[], connector: Connector) => {
+    connector.users.value = payload
 }
 
-const userListMessageHandler: MessageHandler<SerializedUser[]> = {
-    handleMessage(payload: SerializedUser[], connector: Connector) {
-        connector.users.value = payload
-    }
+export interface ConnectorModule {
+    setup(connector: Connector): void
 }

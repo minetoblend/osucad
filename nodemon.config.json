@@ -4,7 +4,8 @@
   ],
   "ext": "ts",
   "ignore": [
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "./src/"
   ],
   "exec": "ts-node --project ./tsconfig.server.json -r tsconfig-paths/register ./server/server.ts"
 }
