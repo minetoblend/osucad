@@ -1,0 +1,47 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\marvi\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add @osucad/common
+
+PATH: 
+  C:\Users\marvi\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\marvi\AppData\Local\Programs\Python\Python310\;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\WireGuard\;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\marvi\.cargo\bin;C:\Users\marvi\AppData\Local\Microsoft\WindowsApps;C:\Users\marvi\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\marvi\.dotnet\tools;C:\Users\marvi\AppData\Local\gitkraken\bin;C:\Users\marvi\AppData\Roaming\npm;C:\Users\marvi\AppData\Local\JetBrains\Toolbox\scripts;C:\Users\marvi\AppData\Local\Microsoft\WindowsApps;
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  16.14.2
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@osucad%2fcommon: Not found
+      at Request.params.callback [as _callback] (C:\Users\marvi\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66145:18)
+      at Request.self.callback (C:\Users\marvi\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140890:22)
+      at Request.emit (node:events:526:28)
+      at Request.<anonymous> (C:\Users\marvi\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141862:10)
+      at Request.emit (node:events:526:28)
+      at IncomingMessage.<anonymous> (C:\Users\marvi\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141784:12)
+      at Object.onceWrapper (node:events:645:28)
+      at IncomingMessage.emit (node:events:538:35)
+      at endReadableNT (node:internal/streams/readable:1345:12)
+      at processTicksAndRejections (node:internal/process/task_queues:83:21)
+
+npm manifest: 
+  {
+    "name": "@osucad/server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
