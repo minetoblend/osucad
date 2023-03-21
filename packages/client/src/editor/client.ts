@@ -1,25 +1,37 @@
-import { MutationSource, ObjectPool, Op, OpCode, squashOps } from "@osucad/common";
+import { ObjectNode } from "@osucad/common/src/object";
+import {
+  MutationSource,
+  ObjectPool,
+  Op,
+  OpCode,
+  squashOps,
+} from "@osucad/common";
 import { deserialize, serialize } from "@osucad/common/src/serialize";
-import { Subject, filter, windowTime, map, bufferTime } from "rxjs";
+import { Subject, filter, map, bufferTime } from "rxjs";
 import { History } from "./history";
 
 export class Client<T extends object> {
   readonly ws: WebSocket;
 
-  readonly pool = new ObjectPool<T>();
+  readonly pool: ObjectPool<T>;
 
   readonly unsentMutations: Op[] = [];
 
-  readonly history = new History(this.pool)
+  readonly history: History;
 
   message$ = new Subject<{ op: string; payload: any }>();
 
-  conected$ = new Subject<void>();
+  connected$ = new Subject<void>();
 
-  constructor() {
+  initialized$ = new Subject<void>();
+
+  constructor(initialiState: T = {} as T) {
+    this.pool = new ObjectPool(new ObjectNode(initialiState));
+    this.history = new History(this.pool);
+
     this.ws = new WebSocket("ws://localhost:3000");
-    this.ws.onopen = () => this.conected$.next();
-    this.ws.onerror = (e) => this.conected$.error(e);
+    this.ws.onopen = () => this.connected$.next();
+    this.ws.onerror = (e) => this.connected$.error(e);
     this.ws.onmessage = (e) => this.message$.next(JSON.parse(e.data));
     this.init();
   }
@@ -29,9 +41,13 @@ export class Client<T extends object> {
   }
 
   init() {
-    this.message$
-      .pipe(filter((e) => e.op === "mutation"))
-      .subscribe((e) => this.pool.apply(deserialize(e.payload) as any, MutationSource.Remote));
+    this.message$.pipe(filter((e) => e.op === "mutation")).subscribe((e) => {
+      this.pool.apply(deserialize(e.payload) as any, MutationSource.Remote);
+      if (e.payload.type === OpCode.Hydrate && e.payload.path.length === 0)
+        this.initialized$.next();
+    });
+
+    this.message$.subscribe((e) => console.log(e));
 
     this.message$
       .pipe(filter((e) => e.op === "mutation"))
@@ -39,13 +55,21 @@ export class Client<T extends object> {
 
     this.pool.mutation$
       .pipe(
-        filter((e) => e.source === MutationSource.Local || e.source === MutationSource.UndoRedo),
+        filter(
+          (e) =>
+            e.source === MutationSource.Local ||
+            e.source === MutationSource.UndoRedo
+        ),
         map((e) => e.op),
-        bufferTime(25),
-        filter((ops) => ops.length > 0 && this.ws.readyState === WebSocket.OPEN),
+        bufferTime(100),
+        filter(
+          (ops) => ops.length > 0 && this.ws.readyState === WebSocket.OPEN
+        ),
         map(squashOps)
       )
       .subscribe((ops) => {
+        console.log(ops);
+
         ops.forEach((op) =>
           this.ws.send(
             JSON.stringify({ op: "mutation", payload: serialize(op) })
@@ -53,4 +77,9 @@ export class Client<T extends object> {
         );
       });
   }
+}
+
+
+type User = {
+  displayName: string
 }

@@ -1,7 +1,16 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
+import { createApp } from "vue";
+import "bootstrap/scss/bootstrap-grid.scss";
+import "./style.styl";
+import App from "./App.vue";
 
-createApp(App).mount('#app')
+import { Quasar, Notify } from "quasar";
+import "quasar/src/css/index.sass";
 
-// import './editor/state'
+const app = createApp(App);
+app.use(Quasar, {
+  plugins: {Notify},
+  config: {
+    dark: true,
+  },
+});
+app.mount("#app");

@@ -4,12 +4,12 @@ import { Subject } from "rxjs";
 import { AbstractNode } from "./node";
 
 export class ObjectPool<T extends object = {}> {
-  readonly root = new ObjectNode<T>({} as T);
+  readonly root: ObjectNode<T>;
 
   readonly mutation$ = new Subject<MutationEvent>();
 
-
-  constructor() {
+  constructor(state: ObjectNode<T>) {
+    this.root = state;
     this.root.setPool(this);
   }
 
@@ -18,8 +18,6 @@ export class ObjectPool<T extends object = {}> {
     if (!node) throw new Error("Node not found");
     return node.apply(op, source);
   }
-
-  
 }
 
 export type MutationEvent = {

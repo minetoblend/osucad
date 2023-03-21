@@ -19,13 +19,13 @@ export class ObjectNode<
   constructor(state: T) {
     super();
 
-    this.#hydrate(state);
+    this.hydrate(state);
   }
 
   apply(op: Op, source: MutationSource) {
     switch (op.type) {
       case OpCode.Hydrate:
-        return this.#hydrate(op.data as T);
+        return this.hydrate(op.data as T);
       case OpCode.Update:
         return this.update(op.data as Partial<T>, source);
       default:
@@ -92,6 +92,7 @@ export class ObjectNode<
 
   getChild(key: string): AbstractNode | undefined {
     const value = this.get(key as any) as any;
+    
     if (
       value !== null &&
       typeof value === "object" &&
@@ -102,7 +103,7 @@ export class ObjectNode<
     return undefined;
   }
 
-  #hydrate(data: T): MutationResult {
+  hydrate(data: T): MutationResult {
     const oldState = this.state;
 
     for (const key in oldState) {
