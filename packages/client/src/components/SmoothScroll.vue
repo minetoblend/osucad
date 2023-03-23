@@ -49,7 +49,7 @@ watch([containerHeight, contentHeight], () => {
 </script>
 
 <template>
-  <div ref="container" class="container">
+  <div ref="container" class="scroll-container">
     <div ref="content" class="content" :style="{ top: -smoothScroll + 'px' }">
       <slot />
     </div>
@@ -65,14 +65,13 @@ watch([containerHeight, contentHeight], () => {
 </template>
 
 <style lang="stylus" scoped>
-.container
+.scroll-container
   overflow hidden
   width 100%
   height 100%
 
   position: relative
-
-
+  
   .content
     position: absolute
     width 100%

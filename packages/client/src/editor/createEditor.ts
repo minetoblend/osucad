@@ -1,45 +1,38 @@
-import { Difficulty, createDifficulty } from "./difficulty";
-import { Metadata, createMetadata } from "./metadata";
-import { ObjectNode, OpCode } from "@osucad/common";
+import { EditorState, DifficultyState, MetadataState } from "@osucad/common";
 import { Client } from "./client";
 import { firstValueFrom } from "rxjs";
 import { History } from "./history";
-import { computed } from "vue";
+import { PresenceManager } from "./presence";
 
 let currentEditor: EditorInstance | undefined;
 
 export async function createEditor() {
-  const client = new Client({
-    // metadata: new ObjectNode<Metadata>({} as Metadata),
-    // difficulty: new ObjectNode<Difficulty>({} as Difficulty),
-  } as any);
+  const client = new Client(new EditorState());
 
   await firstValueFrom(client.initialized$);
 
-  console.log(client.state.getChild("metadata"));
-
   const editor: EditorInstance = {
+    client,
     history: client.history,
     state: client.state,
-    metadata: createMetadata(computed(() => client.state.get("metadata"))),
-    difficulty: createDifficulty(
-      computed(() => client.state.get("difficulty"))
-    ),
+    metadata: client.state.metadata,
+    difficulty: client.state.difficulty,
+    presence: client.presence,
   };
 
   currentEditor = editor;
-
-  console.log("init");
 
   return editor;
 }
 
 export type EditorInstance = {
+  client: Client<EditorState>;
   history: History;
-  state: ObjectNode<any>;
+  state: EditorState;
+  presence: PresenceManager;
 
-  metadata: Metadata;
-  difficulty: Difficulty;
+  metadata: MetadataState;
+  difficulty: DifficultyState;
 };
 
 export function useEditor() {

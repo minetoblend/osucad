@@ -34,7 +34,7 @@ export function deserialize(data: unknown): unknown {
 function deserializeObject(data: JsonObject) {
   const serializedData = {} as any;
   for (const key in data) serializedData[key] = deserialize(data[key]);
-  return new ObjectNode(serializedData);
+return new ObjectNode(serializedData);
 }
 
 export function serialize(data: unknown): Json {

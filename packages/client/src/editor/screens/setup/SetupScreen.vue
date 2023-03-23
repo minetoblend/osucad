@@ -7,6 +7,7 @@ import { computed } from "@vue/reactivity";
 import { QSlider } from "quasar";
 import { useKeyModifier } from "@vueuse/core";
 import SmoothScroll from "@/components/SmoothScroll.vue";
+import CursorOverlay from "@/components/CursorOverlay.vue";
 
 const value = ref("Hello World");
 
@@ -50,7 +51,7 @@ function onSliderPan(phase: "start" | "end") {
   <EditorScreen>
     <SmoothScroll>
       <div class="d-flex justify-content-center align-items-center">
-        <div class="card" style="max-width: 500px">
+        <div class="card" style="max-width: 1000px; position: relative">
           <div class="row align-items-center gy-3">
             <div class="col-12">
               <h3>Metadata</h3>
@@ -59,7 +60,7 @@ function onSliderPan(phase: "start" | "end") {
               <label for="artist">Artist</label>
             </div>
             <div class="col-8">
-              <TextInput id="artist" v-model.trim="metadata.artistUnicode" />
+              <TextInput id="artist" v-model="metadata.artistUnicode" presence-id="metadata.artist" />
             </div>
 
             <div class="col-4">
@@ -68,12 +69,9 @@ function onSliderPan(phase: "start" | "end") {
             <div class="col-8">
               <TextInput
                 id="artistAscii"
-                v-model.trim="artistAscii"
-                :style="{
-                  color: metadata.artist?.length
-                    ? undefined
-                    : 'rgba(255,255,255,0.5  )',
-                }"
+                v-model="metadata.artist"
+                :placeholder="metadata.artistUnicode"
+                presence-id="metadata.artist-ascii"
               />
             </div>
 
@@ -81,7 +79,7 @@ function onSliderPan(phase: "start" | "end") {
               <label for="title"> Title </label>
             </div>
             <div class="col-8">
-              <TextInput id="title" v-model.trim="metadata.titleUnicode" />
+              <TextInput id="title" v-model="metadata.titleUnicode" presence-id="title" />
             </div>
 
             <div class="col-4">
@@ -91,12 +89,10 @@ function onSliderPan(phase: "start" | "end") {
             <div class="col-8">
               <TextInput
                 id="titleAscii"
-                v-model.trim="titleAscii"
-                :style="{
-                  color: metadata.title?.length
-                    ? undefined
-                    : 'rgba(255,255,255,0.5  )',
-                }"
+                v-model="metadata.title"
+                :placeholder="metadata.titleUnicode"
+                
+                presence-id="title-ascii"
               />
             </div>
 
@@ -105,7 +101,7 @@ function onSliderPan(phase: "start" | "end") {
             </div>
 
             <div class="col-8">
-              <TextInput id="difficultyName" v-model.trim="metadata.difficulty" />
+              <TextInput id="difficultyName" v-model="metadata.difficulty" presence-id="difficulty-name" />
             </div>
 
             <div class="col-12">
@@ -180,6 +176,8 @@ function onSliderPan(phase: "start" | "end") {
               />
             </div>
           </div>
+          <CursorOverlay id="setup-screen" />
+
         </div>
       </div>
       <div style="height: 100px" />

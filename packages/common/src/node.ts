@@ -5,7 +5,7 @@ import { Op } from "./protocol";
 export abstract class AbstractNode<Serialized = any> {
   id?: string;
   parent?: AbstractNode;
-  path: string = '';
+  path: string = "";
   pool?: ObjectPool;
 
   readonly mutation$ = new Subject<MutationEvent>();
@@ -37,7 +37,7 @@ export abstract class AbstractNode<Serialized = any> {
   detach() {
     this.parent = undefined;
     this.id = undefined;
-    this.path = '';
+    this.path = "";
     this.setPool(undefined);
   }
 
@@ -50,11 +50,15 @@ export abstract class AbstractNode<Serialized = any> {
     }
   }
 
+  abstract hydrate(date: any): void;
+
   abstract serialize(): Serialized;
 
-  abstract toPlain(): any;
+  toHydrationState(): any {
+    return this.serialize();
+  }
 
-  abstract toHydrationState(): any;
+  abstract toPlain(): any;
 }
 
 export type MutationResult =

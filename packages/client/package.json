@@ -13,6 +13,7 @@
     "@quasar/extras": "^1.15.11",
     "@vueuse/core": "^9.13.0",
     "bootstrap": "^5.2.3",
+    "pixi.js": "^7.2.2",
     "quasar": "^2.11.8",
     "rxjs": "^7.8.0",
     "sass": "^1.59.3",

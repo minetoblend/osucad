@@ -1,24 +1,19 @@
-import { AbstractNode, MutationResult } from "./node";
 import {
-  JsonObject,
-  NodeType,
   Op,
   OpCode,
-  SerializedObject,
+  MutationSource,
+  AbstractNode,
+  MutationResult,
   UpdateOp,
-} from "./protocol";
-import { serialize } from "./serialize";
+  JsonObject,
+} from ".";
 import { shallowReactive } from "vue";
-import { MutationSource } from "./pool";
-
-export class ObjectNode<
-  T extends object
-> extends AbstractNode {
-  readonly state: T = shallowReactive({} as T);
+import { serialize } from "./serialize";
+export class StaticObjectNode<T extends object> extends AbstractNode {
+  readonly state: T;
 
   constructor(state: T) {
     super();
-    this.hydrate(state);
 
     for (const key in state) {
       const value = state[key] as any;
@@ -105,49 +100,29 @@ export class ObjectNode<
   getChild(key: string): AbstractNode | undefined {
     const value = this.get(key as any) as any;
 
-    if (
-      value !== null &&
-      typeof value === "object" &&
-      value instanceof AbstractNode
-    )
-      return value;
+    if (value instanceof AbstractNode) return value;
 
     return undefined;
   }
 
   hydrate(data: T): MutationResult {
-    const oldState = this.state;
-
-    console.log("hydrating", this, data	);
-    
-
-    for (const key in oldState) {
-      const value = oldState[key];
-      if (value instanceof AbstractNode) value.detach();
-    }
-
-    Object.keys(this.state).forEach((key) => delete (this.state as any)[key]);
-
     for (const key in data) {
       const value = data[key];
+      const oldValue = this.state[key];
 
+      if (oldValue instanceof AbstractNode) {
+        oldValue.hydrate(value);
+        continue;
+      }
+
+      if (oldValue instanceof AbstractNode) oldValue.detach();
       if (value instanceof AbstractNode) value.attach(this, key);
 
       this.state[key] = value;
     }
 
     return {
-      modified: true,
-      op: {
-        type: OpCode.Hydrate,
-        path: this.path!,
-        data: this.serialize(),
-      },
-      reverse: {
-        type: OpCode.Hydrate,
-        path: this.path!,
-        data: oldState,
-      },
+      modified: false,
     };
   }
 
@@ -165,10 +140,6 @@ export class ObjectNode<
     return plain;
   }
 
-  toHydrationState() {
-    return serialize(this.state);
-  }
-
   set<K extends keyof T>(key: K, value: T[K]) {
     this.update({ [key]: value } as any);
   }
@@ -176,8 +147,4 @@ export class ObjectNode<
   getChildren(): AbstractNode<any>[] {
     return Object.values(this.state).filter((it) => it instanceof AbstractNode);
   }
-}
-
-export function TypedObjectNode<T extends object>() {
-  return ObjectNode as { new (data: T): ObjectNode<T> & T }
 }

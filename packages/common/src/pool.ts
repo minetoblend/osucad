@@ -3,12 +3,12 @@ import { Op } from "./protocol";
 import { Subject } from "rxjs";
 import { AbstractNode } from "./node";
 
-export class ObjectPool<T extends object = {}> {
-  readonly root: ObjectNode<T>;
+export class ObjectPool<T extends AbstractNode = any> {
+  readonly root: T;
 
   readonly mutation$ = new Subject<MutationEvent>();
 
-  constructor(state: ObjectNode<T>) {
+  constructor(state: T) {
     this.root = state;
     this.root.setPool(this);
   }
